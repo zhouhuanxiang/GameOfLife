@@ -1,5 +1,5 @@
 var Map = function(ctx){
-  var cellSize = 20;      //代表细胞的方框大小
+  var cellSize = 5;      //代表细胞的方框大小
   var logic;              //含有成员 logic，控制逻辑
   var row = 0;            //
   var column = 0;         //
@@ -17,7 +17,7 @@ var Map = function(ctx){
         else{
           ctx.fillStyle = "rgb(256,128,128)";
         }
-        ctx.fillRect(j*cellSize-1, i*cellSize-1, cellSize-2, cellSize-2);
+        ctx.fillRect(j*cellSize-0.5, i*cellSize-0.5, cellSize-1, cellSize-1);
       }
     }
   }
@@ -34,7 +34,7 @@ var Map = function(ctx){
         setInterval(function() {              //由于时钟处理比较简单，所以写在 Map 里
           logic.update();                     //定期按时间跟新 logic 并绘制
           draw();
-        }, 500);
+        }, 300);
     }
   };
   return public;

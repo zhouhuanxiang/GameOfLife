@@ -51,6 +51,7 @@ var Logic = function() {
         break;
       }
     }
+    return [leftFlag, rightFlag, topFlag, buttomFlag];
   };
   var nextRound = function(){                               //新的时间片内判断细胞存活
     nextlogicMap = [];
@@ -76,30 +77,46 @@ var Logic = function() {
       }
     }
     for(i = 1; i < originRow-1; i+=1){                      //判断左边界是否有新细胞
-      var count = logicMap[i-1][1]+logicMap[i][1]+logicMap[i+1][1];
+      var count = logicMap[i-1][1]+logicMap[i][1]+logicMap[i+1][1]
+                  +logicMap[i-1][0]+logicMap[i+1][0];
       if(count == 3){
         nextlogicMap[i+topFlag][0+leftFlag] = live;
       }
+      if(count == 2){
+        nextlogicMap[i+topFlag][0+leftFlag] = logicMap[i][0];
+      }
     }
     for(i = 1; i < originRow-1; i+=1){                      // 右边界
-      var count = logicMap[i-1][originColumn-2] + logicMap[i][originColumn-2] + logicMap[i+1][originColumn-2];
+      var count = logicMap[i-1][originColumn-2] + logicMap[i][originColumn-2] + logicMap[i+1][originColumn-2]
+                  +logicMap[i-1][originColumn-1]+logicMap[i+1][originColumn-1];
       if(count == 3){
         nextlogicMap[i+topFlag][originColumn-1+leftFlag] = live;
       }
+      if(count == 2){
+        nextlogicMap[i+topFlag][originColumn-1+leftFlag] = logicMap[i][originColumn-1];
+      }
     }
     for(i = 1; i < originColumn-1; i+=1){                   //上边界
-      var count = logicMap[1][i-1] + logicMap[1][i] + logicMap[1][i+1];
+      var count = logicMap[1][i-1] + logicMap[1][i] + logicMap[1][i+1]
+                  +logicMap[0][i-1]+logicMap[0][i+1];
       if(count == 3){
         nextlogicMap[0+topFlag][i+leftFlag] = live;
       }
+      if(count == 2){
+        nextlogicMap[0+topFlag][i+leftFlag] = logicMap[0][i];
+      }
     }
     for(i = 1; i < originColumn-1; i +=1){                  //下边界
-      var count = logicMap[originRow-2][i-1] + logicMap[originRow-2][i] + logicMap[originRow-2][i+1];
+      var count = logicMap[originRow-2][i-1] + logicMap[originRow-2][i] + logicMap[originRow-2][i+1]
+                  +logicMap[originRow-1][i-1]+logicMap[originRow-1][i+1];
       if(count == 3){
         nextlogicMap[originRow-1+topFlag][i+leftFlag] = live;
       }
+      if(count == 2){
+        nextlogicMap[originRow-1+topFlag][i+leftFlag] = logicMap[originRow-1][i];
+      }
     }
-    logicMap = nextlogicMap;                              //更新表
+    return nextlogicMap;                              //返回更新表
   }
 
   var public = {
@@ -119,17 +136,22 @@ var Logic = function() {
                                                           //这里是0.15几率存活
       for(i = 1; i < maxRow-1; i+=1){
         for(j = 1; j < maxColumn-1; j+=1){
-          logicMap[i][j] = (Math.random()>0.85)? live:die;
+          logicMap[i][j] = (Math.random()>0.9)? live:die;
         }
       }
     },
     update: function(){
       resize();
-      nextRound();
+      logicMap = nextRound();
     },
     get: function(ypos, xpos){
       return logicMap[ypos+1+baseRow][xpos+1+baseColumn];
     },
+    resize: resize,                                     //以下原则为私有成员及函数
+    nextRound: nextRound,                               //但是为了测试获取信息，改为共有
+    setLogicMap: function(newMap){
+      logicMap = newMap;
+    }
   };
   return public;
 }
